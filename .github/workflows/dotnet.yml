@@ -32,12 +32,15 @@ jobs:
     #   run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: dotnet publish
+      
     - name: Check files
       run: ls -l ./Villsource.Server/bin/Release/net8.0/publish
 
     - name: Create deployment package
       run: |
         zip -r deployment.zip ./Villsource.Server/bin/Release/net8.0/publish
+    - name: Check files
+      run: ls -l .
 
     - name: Configure SSH
       uses: webfactory/ssh-agent@v0.8.0
@@ -45,6 +48,6 @@ jobs:
         ssh-private-key: ${{ secrets.GCP_SSH_PK }}
     - name: Copy files to server
       run: |
-        scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/
+        scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "unzip -o ${{ secrets.DEPLOY_PATH }}/deployment.zip -d ${{ secrets.DEPLOY_PATH }}"
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart kestrel-asp.net.service"
