@@ -50,4 +50,4 @@ jobs:
       run: |
         scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "unzip -o ${{ secrets.DEPLOY_PATH }}deployment.zip -d ${{ secrets.DEPLOY_PATH }}"
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart kestrel-asp.net.service"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "chmod -R 777 ${{ secrets.DEPLOY_PATH }} && sudo systemctl restart kestrel-asp.net.service"
