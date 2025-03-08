@@ -38,7 +38,7 @@ jobs:
 
     - name: Create deployment package
       run: |
-        zip -r deployment.zip ./Villsource.Server/bin/Release/net8.0/publish
+        zip -r deployment.zip ./Villsource.Server/bin/Release/net8.0/publish/*
     - name: Check files
       run: ls -l .
 
@@ -49,5 +49,5 @@ jobs:
     - name: Copy files to server
       run: |
         scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "unzip -o ${{ secrets.DEPLOY_PATH }}/deployment.zip -d ${{ secrets.DEPLOY_PATH }}"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "unzip -o ${{ secrets.DEPLOY_PATH }}deployment.zip -d ${{ secrets.DEPLOY_PATH }}"
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart kestrel-asp.net.service"
