@@ -31,4 +31,6 @@ jobs:
     # - name: Test
     #   run: dotnet test --no-build --verbosity normal
     - name: Publish
-      run: dotnet publish && ls -l ./bin/Release/net8.0/publish
+      run: dotnet publish
+    - name: Check files
+      run: ls -l ./Villsource.Server/bin/Release/net8.0/publish
