@@ -31,9 +31,7 @@ jobs:
       - name: Publish
         run: |
           dotnet publish
-          cd Villsource.Server/bin/Release/net8.0/publish/
-          zip -r ../../../../../deployment.zip *
-          cd ../../../../../)
+          cd Villsource.Server/bin/Release/net8.0/publish && zip -r ../../../../../deployment.zip && cd ../../../../../
 
       - name: Configure SSH
         uses: webfactory/ssh-agent@v0.8.0
