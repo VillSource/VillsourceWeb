@@ -45,6 +45,6 @@ jobs:
         ssh-private-key: ${{ secrets.GCP_SSH_PK }}
     - name: Copy files to server
       run: |
-        scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
+        scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/deployment.zip
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "unzip -o ${{ secrets.DEPLOY_PATH }}/deployment.zip -d ${{ secrets.DEPLOY_PATH }}"
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart kestrel-asp.net.service"
