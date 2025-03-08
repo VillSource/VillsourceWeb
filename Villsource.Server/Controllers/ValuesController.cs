@@ -20,7 +20,7 @@ public class ValuesController : ControllerBase
     {
         return Ok(new
         {
-            value = "1.0.0"
+            value = "3.0.0"
         });
     }
 }
