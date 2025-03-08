@@ -1,0 +1,6 @@
+@Villsource.Server_HostAddress = http://localhost:5110
+
+GET {{Villsource.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
