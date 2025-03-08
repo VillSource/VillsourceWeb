@@ -1,53 +1,46 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    # - name: Test
-    #   run: dotnet test --no-build --verbosity normal
-    - name: Publish
-      run: dotnet publish
-      
-    - name: Check files
-      run: ls -l ./Villsource.Server/bin/Release/net8.0/publish
+      - uses: actions/checkout@v4
 
-    - name: Create deployment package
-      run: |
-        (cd Villsource.Server/bin/Release/net8.0/publish/ && zip -r ../../../../../deployment.zip * && cd ../../../../../)
-    - name: Check files
-      run: ls -l .
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-    - name: Configure SSH
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.GCP_SSH_PK }}
-    - name: Copy files to server
-      run: |
-        scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "unzip -o ${{ secrets.DEPLOY_PATH }}deployment.zip -d ${{ secrets.DEPLOY_PATH }}"
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "chmod -R 777 ${{ secrets.DEPLOY_PATH }} && sudo systemctl restart kestrel-asp.net.service"
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Publish
+        run: |
+          dotnet publish
+          cd Villsource.Server/bin/Release/net8.0/publish/
+          zip -r ../../../../../deployment.zip *
+          cd ../../../../../)
+
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.GCP_SSH_PK }}
+      - name: Deploy to Server
+        run: |
+          scp -o StrictHostKeyChecking=no deployment.zip ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "unzip -o ${{ secrets.DEPLOY_PATH }}deployment.zip -d ${{ secrets.DEPLOY_PATH }}"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "chmod -R 777 ${{ secrets.DEPLOY_PATH }} && sudo systemctl restart kestrel-asp.net.service"
